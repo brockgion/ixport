@@ -54,10 +54,27 @@ const statusIndex = (key) => Math.max(0, statusSteps.findIndex(s => s.key === ke
 const StatusTimeline = ({ application, onDateChange }) => {
   const currentStepIndex = statusSteps.findIndex(step => step.key === application.status);
 
-  const handleDateChange = (stepKey, newDate) => {
-    const timestampField = statusSteps.find(s => s.key === stepKey)?.timestamp;
-    if (timestampField && newDate) {
-      onDateChange(application.ix_application_id, timestampField, newDate);
+  // local draft dates by step key (e.g., { submitted: '2025-05-10' })
+  const [draftDates, setDraftDates] = React.useState({});
+
+  // sync drafts with incoming application timestamps
+  React.useEffect(() => {
+    const next = {};
+    for (const step of statusSteps) {
+      const ts = application[step.timestamp];
+      next[step.key] = ts ? new Date(ts).toISOString().split('T')[0] : '';
+    }
+    setDraftDates(next);
+  }, [application]);
+
+  const handleCommit = (stepKey) => {
+    const step = statusSteps.find(s => s.key === stepKey);
+    const timestamp = application[step.timestamp];
+    const original = timestamp ? new Date(timestamp).toISOString().split('T')[0] : '';
+    const draft = draftDates[stepKey] ?? '';
+
+    if (draft && draft !== original) {
+      onDateChange(application.ix_application_id, step.timestamp, draft);
     }
   };
 
@@ -70,19 +87,23 @@ const StatusTimeline = ({ application, onDateChange }) => {
           const Icon = step.icon;
           const isComplete = index < currentStepIndex;
           const isCurrent  = index === currentStepIndex;
-          const timestamp  = application[step.timestamp];
 
           return (
             <div key={step.key} className="flex-1 flex flex-col items-center relative">
               {index < statusSteps.length - 1 && (
-                <div className={`absolute top-6 left-1/2 w-full h-0.5 ${isComplete ? 'bg-green-500' : 'bg-gray-300'}`} style={{ zIndex: 0 }} />
+                <div
+                  className={`absolute top-6 left-1/2 w-full h-0.5 ${isComplete ? 'bg-green-500' : 'bg-gray-300'}`}
+                  style={{ zIndex: 0 }}
+                />
               )}
 
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center relative z-10 ${
-                isComplete ? 'bg-green-500 text-white'
-                : isCurrent ? 'bg-blue-500 text-white'
-                : 'bg-gray-300 text-gray-600'
-              }`}>
+              <div
+                className={`w-12 h-12 rounded-full flex items-center justify-center relative z-10 ${
+                  isComplete ? 'bg-green-500 text-white'
+                    : isCurrent ? 'bg-blue-500 text-white'
+                    : 'bg-gray-300 text-gray-600'
+                }`}
+              >
                 <Icon size={24} />
               </div>
 
@@ -90,12 +111,31 @@ const StatusTimeline = ({ application, onDateChange }) => {
                 <div className={`text-xs font-medium ${isCurrent ? 'text-blue-600' : isComplete ? 'text-green-600' : 'text-gray-500'}`}>
                   {`Step ${index + 1}: ${step.label}`}
                 </div>
+
                 {(isComplete || isCurrent) && (
                   <input
                     type="date"
-                    value={timestamp ? new Date(timestamp).toISOString().split('T')[0] : ''}
-                    onChange={(e) => handleDateChange(step.key, e.target.value)}
-                    className="text-xs mt-1 px-1 py-0.5 border border-gray-300 rounded"
+                    value={draftDates[step.key] ?? ''}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      const v = e.target.value;
+                      setDraftDates(prev => ({ ...prev, [step.key]: v }));
+                    }}
+                    onBlur={(e) => {
+                      e.stopPropagation();
+                      handleCommit(step.key);
+                    }}
+                    onKeyDown={(e) => {
+                      // let users press Enter to commit without clicking away
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.currentTarget.blur(); // triggers onBlur commit
+                      }
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="text-xs mt-1 px-1 py-0.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
                     style={{ fontSize: '10px' }}
                   />
                 )}
@@ -135,11 +175,12 @@ const ApplicationCard = ({
   expanded,
   onToggle
 }) => {
-  const [notes, setNotes] = useState(application.notes ?? '');
+  const [notes, setNotes] = useState(application.notes && application.notes !== STATUS_NOTES[application.status] ? application.notes : '');
 
   useEffect(() => {
-    setNotes(application.notes ?? '');
-  }, [application.notes]);
+    setNotes(application.notes && application.notes !== STATUS_NOTES[application.status] ? application.notes : '');
+  }, [application.notes, application.status]);
+
 
   const canAdvance = isAdmin && application.status !== 'complete' && application.status !== 'withdrawn';
 
@@ -150,7 +191,6 @@ const ApplicationCard = ({
       onStatusChange(application.ix_application_id, nextStatus);
     }
   };
-
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this application?')) {
@@ -205,7 +245,7 @@ const ApplicationCard = ({
               <p className="font-medium">{application.installer?.company_name}</p>
             </div>
             <div>
-              <p className="text-gray-600">Panels</p>
+              <p className="text-gray-600">Panel Manufacturer</p>
               <p className="font-medium">{application.system?.panel_manufacturer}</p>
             </div>
             <div>
@@ -236,7 +276,7 @@ const ApplicationCard = ({
                 Save Notes
               </button>
               <span className="text-xs text-gray-500 self-center">
-                {application.updated_at ? `Last updated ${new Date(application.updated_at).toLocaleString()}` : ''}
+                {application.updated_at ? `Notes last updated ${new Date(application.updated_at).toLocaleString()}` : ''}
               </span>
             </div>
           </div>
@@ -595,7 +635,7 @@ function App() {
           ix_installer_id: installer.ix_installer_id,
           ix_system_id: system.ix_system_id,
           status: 'site_selection',
-          notes: STATUS_NOTES['site_selection']
+          notes: 'Notes go here...'
         });
       if (appError) throw appError;
 
@@ -641,7 +681,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow-sm border-b">
+      <div className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">

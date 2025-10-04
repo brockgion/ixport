@@ -1,0 +1,4 @@
+-- Temporarily disable RLS for demo
+ALTER TABLE interconnection_application DISABLE ROW LEVEL SECURITY;
+ALTER TABLE customer DISABLE ROW LEVEL SECURITY;
+ALTER TABLE account DISABLE ROW LEVEL SECURITY;
