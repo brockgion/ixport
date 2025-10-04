@@ -204,16 +204,23 @@ const ApplicationCard = ({
   return (
     <div className="bg-white rounded-lg shadow-md border border-black p-6 mb-4">
       <div className="flex justify-between items-start mb-4">
+        {/* LEFT: title/address/applicant */}
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Application #{application.ix_application_id.substring(0, 8)}</h3>
+          <h3 className="text-lg font-bold text-gray-900">
+            Application #{application.ix_application_id.substring(0, 8)}
+          </h3>
           <p className="text-sm text-gray-600">
             {application.premise?.street_address}, {application.premise?.city}, {application.premise?.state}
           </p>
           {application.customer?.full_name && (
-            <p className="text-sm text-gray-600 mt-1">Applicant: {application.customer?.full_name}</p>
+            <p className="text-sm text-gray-800 mt-1">
+              <span className="font-semibold">Applicant:</span> {application.customer.full_name}
+            </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* RIGHT: status + installer (only on collapsed view) */}
+        <div className="flex flex-col items-end gap-2">
           <div className={`px-3 py-1 rounded-full text-sm font-medium ${
             application.status === 'complete' ? 'bg-green-100 text-green-800' :
             application.status === 'withdrawn' ? 'bg-red-100 text-red-800' :
@@ -221,17 +228,24 @@ const ApplicationCard = ({
           }`}>
             {stepText}
           </div>
+
+          {!expanded && application.installer?.company_name && (
+            <p className="text-xs text-gray-500 truncate" title={application.installer?.company_name}>
+              Installer: {application.installer?.company_name}
+            </p>
+          )}
+
           <button
             onClick={onToggle}
             className="p-1 rounded hover:bg-gray-100 transition"
             aria-label={expanded ? 'Collapse' : 'Expand'}
             title={expanded ? 'Collapse' : 'Expand'}
           >
-            {/* Down when collapsed; rotate up when expanded */}
             <ChevronDown size={18} className={`transition-transform ${expanded ? 'rotate-180' : ''}`} />
           </button>
         </div>
       </div>
+
 
       {expanded && (
         <>
