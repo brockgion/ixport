@@ -5,7 +5,7 @@ The video below provides a start-to-finish demo of how the system works (~10 min
 <div align="center">
   <a href="https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045" target="_blank">
     <img 
-      src="https://cdn.loom.com/sessions/thumbnails/9c372f78ae184edd886cea7a3eaa6045-4cd786c7fe80f195-full-play.gif" 
+      src="https://raw.githubusercontent.com/brockgion/ixport/main/project%20files/project%20thumbnail.png" 
       width="500" 
       alt="Watch the project demo on Loom"
     >
@@ -13,6 +13,7 @@ The video below provides a start-to-finish demo of how the system works (~10 min
 </div>
 
 ---
+
 ### ⏱️ Jump to a Section
 
 - [0:00 — Project Overview](https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045?t=0)
