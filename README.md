@@ -5,7 +5,7 @@ The video below provides a start-to-finish demo of how the system works (~10 min
 <div align="center">
   <a href="https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045" target="_blank">
     <img 
-      src="https://raw.githubusercontent.com/brockgion/ixport/main/project%20files/project%20thumbnail.png" 
+      src="https://raw.githubusercontent.com/brockgion/ixport/main/project%20files/project-thumbnail.jpg" 
       width="500" 
       alt="Watch the project demo on Loom"
     >
