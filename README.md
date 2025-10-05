@@ -1,16 +1,22 @@
-# React + Vite
+# Project Demo Walkthrough
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The video below provides a start-to-finish demo of how the system works (~10 min video):
 
-Currently, two official plugins are available:
+<div align="center">
+  <a href="https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045" target="_blank">
+    <img 
+      src="https://cdn.loom.com/sessions/thumbnails/9c372f78ae184edd886cea7a3eaa6045-4cd786c7fe80f195-full-play.gif" 
+      width="500" 
+      alt="Watch the project demo on Loom"
+    >
+  </a>
+</div>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
+### ⏱️ Jump to a Section
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- [0:00 — Project Overview](https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045?t=0)
+- [1:20 — Database Design Importance](https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045?t=80)
+- [3:19 — Front End and Back End](https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045?t=199)
+- [5:10 — Application Status Tracking](https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045?t=310)
+- [7:10 — Querying Application Data](https://www.loom.com/share/9c372f78ae184edd886cea7a3eaa6045?t=430)
